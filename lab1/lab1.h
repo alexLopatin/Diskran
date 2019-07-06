@@ -6,14 +6,14 @@ const unsigned char NUMBER_OF_DIGITS = 6;
 const unsigned char MAX_DIGIT_VALUE = 91;
 const unsigned char ARGUMENT_COUNT = 3;
 
-struct CarNumber {
+struct TCarNumber {
     unsigned char vals[NUMBER_OF_DIGITS];       // Автомобильные номера в формате A 999 BC
 };
 
-struct KeyValuePair {
-    CarNumber Key;
+struct TKeyValuePair {
+    TCarNumber Key;
     unsigned long long Value;                                  //Числа от 0 до 2^64 - 1.
-    KeyValuePair(CarNumber key, unsigned long long value);
-    KeyValuePair();
+    TKeyValuePair(TCarNumber key, unsigned long long value);
+    TKeyValuePair();
 };
-void RadixSort(KeyValuePair pairs[], size_t size);
+void RadixSort(TKeyValuePair pairs[], size_t size);
