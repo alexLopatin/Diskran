@@ -1,7 +1,10 @@
 #include <iostream>
 using namespace std;
 
-
+struct TKeyValuePair {
+    char Key[256];
+    unsigned long long Value;
+};
 
 class TTree {
     enum TNodeColor { BLACK, RED};
@@ -19,16 +22,30 @@ class TTree {
             Right = nil;
             NodeColor = nodeColor;
         }
-        ~TTreeNode();
+        ~TTreeNode() {
+        }
     };
     
     TTreeNode* Nil;
-public:
     TTreeNode* Root;
+public:
     TTree() {
         Nil = new TTreeNode(0,0, BLACK);
         Root = Nil;       
         Nil->Parent = Nil;
+    }
+    ~TTree() {
+        DeleteMem(Root);
+        delete Nil;
+    }
+    void DeleteMem(TTreeNode* z) {
+        if(z->Left != Nil) {
+            DeleteMem( z->Left);
+        }
+        if(z->Right != Nil) {
+            DeleteMem( z->Right);
+        }
+        delete z;
     }
     void Printf() {
         Print(Root);
@@ -37,18 +54,7 @@ public:
     void FixUp(TTreeNode* z);
     void LeftRotate(TTreeNode* x);
     void RightRotate(TTreeNode* x);
-    void Transplant(TTreeNode* u, TTreeNode* v) {
-        if (u->Parent == Nil) {
-            Root = v;
-        }
-        else if( u == u->Parent->Left) {
-            u->Parent->Left = v;
-        }
-        else {
-            u->Parent->Right = v;
-        }
-        v->Parent = u->Parent;
-    }
+    void Transplant(TTreeNode* u, TTreeNode* v);
     TTreeNode* Find( int value) {
         TTreeNode* z = Root;
         while(z != Nil) {
@@ -72,100 +78,8 @@ public:
         }
         return y;
     }
-    void Delete(int value) {
-        TTreeNode* z = Find(value);
-        if(z == Nil) {
-            return;
-        }
-        TTreeNode* y = z;
-        TTreeNode* x = Nil;
-        int yOriginalColor = y->NodeColor;
-        if(z->Left == Nil) {
-            x = z->Right;
-            Transplant(z, z->Right);
-        }
-        else if(z->Right == Nil) {
-            x = z->Left;
-            Transplant(z, z->Left);
-        }
-        else {
-            y = Minimum(z->Right);
-            yOriginalColor = y->NodeColor;
-            x = y->Right;
-            if(y->Parent == z) {
-                x->Parent = y;
-            }
-            else {
-                Transplant(y, y->Right);
-                y->Right = z->Right;
-                y->Right->Parent = y;
-            }
-            Transplant(z, y);
-            y->Left = z->Left;
-            y->Left->Parent = y;
-            y->NodeColor = z->NodeColor;
-        }
-        if(yOriginalColor == BLACK) {
-            DeleteFixUp(x);
-        }
-    }
-    void DeleteFixUp(TTreeNode* x) {
-        while (x != Root && x->NodeColor == BLACK) {
-            if(x == x->Parent->Left) {
-                TTreeNode* w = x->Parent->Right;
-                if (w->NodeColor == RED) {
-                    w->NodeColor = BLACK;
-                    x->Parent->NodeColor = RED;
-                    LeftRotate(x->Parent);
-                    w = x->Parent->Right;
-                }
-                if (w->Left->NodeColor == BLACK && w->Right->NodeColor == BLACK) {
-                    w->NodeColor = RED;
-                    x = x->Parent;
-                }
-                else if (w->Right->NodeColor == BLACK) {
-                    w->Left->NodeColor = BLACK;
-                    w->NodeColor = RED;
-                    RightRotate(w);
-                    w = x->Parent->Right;
-                }
-                else {
-                    w->NodeColor = x->Parent->NodeColor;
-                    x->Parent->NodeColor = BLACK;
-                    w->Right->NodeColor = BLACK;
-                    LeftRotate(x->Parent);
-                    x = Root;
-                }
-            }
-            else {
-                TTreeNode* w = x->Parent->Left;
-                if (w->NodeColor == RED) {
-                    w->NodeColor = BLACK;
-                    x->Parent->NodeColor = RED;
-                    RightRotate(x->Parent);
-                    w = x->Parent->Left;
-                }
-                if (w->Right->NodeColor == BLACK && w->Left->NodeColor == BLACK) {
-                    w->NodeColor = RED;
-                    x = x->Parent;
-                }
-                else if (w->Left->NodeColor == BLACK) {
-                    w->Right->NodeColor = BLACK;
-                    w->NodeColor = RED;
-                    LeftRotate(w);
-                    w = x->Parent->Left;
-                }
-                else {
-                    w->NodeColor = x->Parent->NodeColor;
-                    x->Parent->NodeColor = BLACK;
-                    w->Left->NodeColor = BLACK;
-                    RightRotate(x->Parent);
-                    x = Root;
-                }
-            }
-        }
-        x->NodeColor = BLACK;
-    }
+    void Delete(int value);
+    void DeleteFixUp(TTreeNode* x);
     void Print(TTreeNode* node, int i = 0) {
         if(node != Nil) {
             Print(node->Right, i + 4);
@@ -209,4 +123,3 @@ public:
         return CheckHeightf(z->Left, currentHeight, blackHeight) && CheckHeightf(z->Left, currentHeight, blackHeight);
     }
 };
-

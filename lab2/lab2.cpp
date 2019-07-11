@@ -111,6 +111,114 @@ void TTree::RightRotate(TTreeNode* x) {
     y->Right = x;
     x->Parent = y;
 }
+void TTree::Delete(int value) {
+        TTreeNode* z = Find(value);
+        if(z == Nil) {
+            return;
+        }
+        TTreeNode* y = z;
+        TTreeNode* x = Nil;
+        int yOriginalColor = y->NodeColor;
+        if(z->Left == Nil) {
+            x = z->Right;
+            Transplant(z, z->Right);
+        }
+        else if(z->Right == Nil) {
+            x = z->Left;
+            Transplant(z, z->Left);
+        }
+        else {
+            y = Minimum(z->Right);
+            yOriginalColor = y->NodeColor;
+            x = y->Right;
+            if(y->Parent == z) {
+                x->Parent = y;
+            }
+            else {
+                Transplant(y, y->Right);
+                y->Right = z->Right;
+                y->Right->Parent = y;
+            }
+            Transplant(z, y);
+            y->Left = z->Left;
+            y->Left->Parent = y;
+            y->NodeColor = z->NodeColor;
+        }
+        delete z;
+        if(yOriginalColor == BLACK) {
+            DeleteFixUp(x);
+        }
+    }
+void TTree::DeleteFixUp(TTreeNode* x) {
+        while (x != Root && x->NodeColor == BLACK) {
+            if(x == x->Parent->Left) {
+                TTreeNode* w = x->Parent->Right;
+                if (w->NodeColor == RED) {
+                    w->NodeColor = BLACK;
+                    x->Parent->NodeColor = RED;
+                    LeftRotate(x->Parent);
+                    w = x->Parent->Right;
+                }
+                if (w->Left->NodeColor == BLACK && w->Right->NodeColor == BLACK) {
+                    w->NodeColor = RED;
+                    x = x->Parent;
+                }
+                else if (w->Right->NodeColor == BLACK) {
+                    w->Left->NodeColor = BLACK;
+                    w->NodeColor = RED;
+                    RightRotate(w);
+                    w = x->Parent->Right;
+                }
+                else {
+                    w->NodeColor = x->Parent->NodeColor;
+                    x->Parent->NodeColor = BLACK;
+                    w->Right->NodeColor = BLACK;
+                    LeftRotate(x->Parent);
+                    x = Root;
+                }
+            }
+            else {
+                TTreeNode* w = x->Parent->Left;
+                if (w->NodeColor == RED) {
+                    w->NodeColor = BLACK;
+                    x->Parent->NodeColor = RED;
+                    RightRotate(x->Parent);
+                    w = x->Parent->Left;
+                }
+                if (w->Right->NodeColor == BLACK && w->Left->NodeColor == BLACK) {
+                    w->NodeColor = RED;
+                    x = x->Parent;
+                }
+                else if (w->Left->NodeColor == BLACK) {
+                    w->Right->NodeColor = BLACK;
+                    w->NodeColor = RED;
+                    LeftRotate(w);
+                    w = x->Parent->Left;
+                }
+                else {
+                    w->NodeColor = x->Parent->NodeColor;
+                    x->Parent->NodeColor = BLACK;
+                    w->Left->NodeColor = BLACK;
+                    RightRotate(x->Parent);
+                    x = Root;
+                }
+            }
+        }
+        x->NodeColor = BLACK;
+    }
+void TTree::Transplant(TTreeNode* u, TTreeNode* v) {
+        if (u->Parent == Nil) {
+            Root = v;
+        }
+        else if( u == u->Parent->Left) {
+            u->Parent->Left = v;
+        }
+        else {
+            u->Parent->Right = v;
+        }
+        v->Parent = u->Parent;
+    }
+
 int main(int argc, char *argv[]) {
     TTree* RBtree = new TTree();
     RBtree->Insert(1);
@@ -125,6 +233,6 @@ int main(int argc, char *argv[]) {
     RBtree->Printf();
     RBtree->Delete(6);
     RBtree->Printf();
-    //cout << RBtree->Minimum(RBtree->Root)->Value << endl;
+    //cout << RBtree->Find(4)->Value << endl;
     delete RBtree;
 }
