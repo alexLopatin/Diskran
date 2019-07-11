@@ -121,6 +121,10 @@ int main(int argc, char *argv[]) {
     RBtree->Insert(6);
     RBtree->Insert(7);
     RBtree->Insert(8);
+    RBtree->Insert(0);
     RBtree->Printf();
+    RBtree->Delete(6);
+    RBtree->Printf();
+    //cout << RBtree->Minimum(RBtree->Root)->Value << endl;
     delete RBtree;
 }
