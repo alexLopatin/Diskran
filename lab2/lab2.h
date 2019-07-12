@@ -1,9 +1,15 @@
 #include <iostream>
+#include <fstream>
+#include <string.h>
 using namespace std;
 
 struct TKeyValuePair {
     char Key[256];
     unsigned long long Value;
+    TKeyValuePair(){
+        memset(Key,255,256);
+        Value = 0;
+    }
 };
 
 class TTree {
@@ -14,8 +20,8 @@ class TTree {
         TTreeNode* Right;
         TTreeNode* Parent;
         TNodeColor NodeColor;
-        int Value;
-        TTreeNode(int v, TTreeNode* p, TNodeColor nodeColor, TTreeNode* nil = 0) {
+        TKeyValuePair Value;
+        TTreeNode(TKeyValuePair v, TTreeNode* p, TNodeColor nodeColor, TTreeNode* nil = 0) {
             Parent = p;
             Value = v;
             Left = nil;
@@ -26,18 +32,45 @@ class TTree {
         }
     };
     
-    TTreeNode* Nil;
-    TTreeNode* Root;
+    TTreeNode* Nil = 0;
 public:
+    TTreeNode* Root = 0;
+    void Write(std::ostream &out, TTreeNode* z) const {
+        out << z->Value.Key << ' ' << z->Value.Value << endl;
+        if(z->Left != Nil) {
+            Write(out, z->Left);
+        }
+        if(z->Right != Nil) {
+            Write(out, z->Right);
+        }
+    }
+
+    friend std::ostream & operator << (std::ostream &out, const TTree & obj)
+    {
+        obj.Write(out, obj.Root);
+        return out;
+    }
+    friend std::istream& operator >> (std::istream& in, TTree& obj) {
+        TKeyValuePair pair;
+        while(in >> pair.Key >> pair.Value) {
+            obj.Insert(pair);
+        }
+        return in;
+    }
+
     TTree() {
-        Nil = new TTreeNode(0,0, BLACK);
-        Root = Nil;       
+        Nil = new TTreeNode(TKeyValuePair(),0, BLACK);
+        Root = Nil;
+        Root->Left = Nil;
+        Root->Right = Nil;      
         Nil->Parent = Nil;
     }
     ~TTree() {
         DeleteMem(Root);
         delete Nil;
+        
     }
+
     void DeleteMem(TTreeNode* z) {
         if(z->Left != Nil) {
             DeleteMem( z->Left);
@@ -47,28 +80,28 @@ public:
         }
         delete z;
     }
-    void Printf() {
-        Print(Root);
-    }
-    void Insert(int value);
+    void Insert(TKeyValuePair value);
     void FixUp(TTreeNode* z);
     void LeftRotate(TTreeNode* x);
     void RightRotate(TTreeNode* x);
     void Transplant(TTreeNode* u, TTreeNode* v);
-    TTreeNode* Find( int value) {
+    TTreeNode* Find(TKeyValuePair value) {
         TTreeNode* z = Root;
+
         while(z != Nil) {
-            if(value == z->Value) {
+            
+            int cmp = strcmp(value.Key, z->Value.Key);
+            if(cmp == 0) {
                 return z;
             }
-            if(value<z->Value) {
+            if(cmp < 0) {
                 z = z->Left;
             }
             else {
                 z = z->Right;
             }
         }
-        return Nil;
+        return 0;
     }
     TTreeNode* Minimum(TTreeNode* z) {
         TTreeNode* y = z->Parent;
@@ -78,19 +111,23 @@ public:
         }
         return y;
     }
-    void Delete(int value);
+    void Delete(TKeyValuePair value);
     void DeleteFixUp(TTreeNode* x);
+    
+    void Printf() {
+        Print(Root);
+    }
     void Print(TTreeNode* node, int i = 0) {
         if(node != Nil) {
             Print(node->Right, i + 4);
             for (int j = 0; j < i; j++) {
                 cout << " ";
             }
-            cout << node->Value << ":" << node->NodeColor << endl;
+            cout << node->Value.Key << ":" << node->Value.Value << endl;
             Print(node->Left, i + 4);
         }
     }
-
+    /*
     bool Check() {
         return CheckHeight();
     }
@@ -122,4 +159,5 @@ public:
         }
         return CheckHeightf(z->Left, currentHeight, blackHeight) && CheckHeightf(z->Left, currentHeight, blackHeight);
     }
+    */
 };

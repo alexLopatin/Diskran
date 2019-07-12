@@ -1,6 +1,7 @@
 #include "lab2.h"
 using namespace std;
-void TTree::Insert(int value) {
+void TTree::Insert(TKeyValuePair value) {
+
     if(Root == Nil) {
         Root = new TTreeNode(value, Nil, BLACK, Nil);
         return;
@@ -9,14 +10,16 @@ void TTree::Insert(int value) {
     TTreeNode* y = Nil;
     while(z != Nil) {
         y = z;
-        if(value<z->Value) {
+        int cmp = strcmp(value.Key, z->Value.Key);
+        if(cmp < 0) {
             z = z->Left;
         }
         else {
             z = z->Right;
         }
     }
-    if(value < y->Value) {
+    int cmp = strcmp(value.Key, y->Value.Key);
+    if(cmp < 0) {
         y->Left =  new TTreeNode(value, y, RED, Nil);
         FixUp(y->Left);
     }
@@ -111,9 +114,9 @@ void TTree::RightRotate(TTreeNode* x) {
     y->Right = x;
     x->Parent = y;
 }
-void TTree::Delete(int value) {
+void TTree::Delete(TKeyValuePair value) {
         TTreeNode* z = Find(value);
-        if(z == Nil) {
+        if(z == 0) {
             return;
         }
         TTreeNode* y = z;
@@ -221,18 +224,72 @@ void TTree::Transplant(TTreeNode* u, TTreeNode* v) {
 
 int main(int argc, char *argv[]) {
     TTree* RBtree = new TTree();
-    RBtree->Insert(1);
-    RBtree->Insert(2);
-    RBtree->Insert(3);
-    RBtree->Insert(4);
-    RBtree->Insert(5);
-    RBtree->Insert(6);
-    RBtree->Insert(7);
-    RBtree->Insert(8);
-    RBtree->Insert(0);
-    RBtree->Printf();
-    RBtree->Delete(6);
-    RBtree->Printf();
-    //cout << RBtree->Find(4)->Value << endl;
+    ifstream inFile(argv[1]);
+    ofstream outFile(argv[2]);
+    ofstream outDictionary;
+    ifstream inDictionary;
+    while (!inFile.eof()) {
+        char command[256];
+        TKeyValuePair pair;
+        inFile >> command;
+        switch(command[0]){
+            case '+':
+                inFile >> pair.Key;
+                inFile >> pair.Value;
+                if(RBtree->Find(pair) == 0 ){
+                    RBtree->Insert(pair);
+                    outFile << "OK" << endl;
+                }
+                else {
+                    outFile << "Exist" << endl;
+                }
+                break;
+            case '-':
+                inFile >> pair.Key;
+                if(RBtree->Find(pair) != 0 ){
+                    RBtree->Delete(pair);
+                    outFile << "OK" << endl;
+                }
+                else {
+                    outFile << "NoSuchWord" << endl;
+                }
+                break;
+            case '!':
+                char commFile[4];
+
+                inFile >> commFile;
+                if(strcmp(commFile, "Save") == 0) {
+                    char path[256];
+                    inFile >> path;
+                    outDictionary.open(path);
+                    outDictionary << *RBtree;
+                    outDictionary.close();
+                    outFile << "OK" << endl;
+                }
+                else if (strcmp(commFile, "Load") == 0) {
+                    char path[256];
+                    inFile >> path;
+                    inDictionary.open(path);
+                    RBtree = new TTree();
+                    inDictionary >> *RBtree;
+                    inDictionary.close();
+                    outFile << "OK" << endl;
+                }
+                break;
+
+            default:
+                strcpy(pair.Key, command);
+                auto node = RBtree->Find(pair);
+                if(node != 0 ){
+                    outFile << "OK: " << node->Value.Value << endl;
+                }
+                else {
+                    outFile << "NoSuchWord" << endl;
+                }
+                break;
+        }
+    }
+    inFile.close();
+    outFile.close();
     delete RBtree;
 }
