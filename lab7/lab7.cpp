@@ -38,40 +38,40 @@ int main(int argc, char *argv[]) {
         if(i % 6 == 0){ 
             if(arr[i / 3] <= arr[i / 2] && arr[i / 3] <= arr[i - 1]) {
                 outFile << "/3 ";
-                i = i / 3;
+                i /= 3;
             }
             else if(arr[i / 2] <= arr[i / 3] && arr[i / 2] <= arr[i - 1]) {
                 outFile << "/2 ";
-                i = i / 2;
+                i /= 2;
             }
             else {
                 outFile << "-1 ";
-                i = i - 1;
+                i--;
             }
         }
         else if (i % 3 == 0) {
             if(arr[i / 3] <= arr[i - 1]) {
                 outFile << "/3 ";
-                i = i / 3;
+                i /= 3;
             }
             else {
                 outFile << "-1 ";
-                i = i - 1;
+                i--;
             }
         }
         else if (i % 2 == 0) {
             if(arr[i / 2] <= arr[i - 1]) {
                 outFile << "/2 ";
-                i = i / 2;
+                i /= 2;
             }
             else {
                 outFile << "-1 ";
-                i = i - 1;
+                i--;
             }
         }
         else {
             outFile << "-1 ";
-            i = i - 1;
+            i--;
         }
     }
     outFile << endl;
