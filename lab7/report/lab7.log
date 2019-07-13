@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.7)  13 JUL 2019 03:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.7.7)  13 JUL 2019 15:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -781,31 +781,78 @@ Underfull \hbox (badness 10000) in paragraph at lines 89--90
  []
 
 
+Overfull \hbox (0.51193pt too wide) in paragraph at lines 91--92
+[]\T2A/cmr/m/n/12 Докажем спра-вед-ли-вость этой фор-му-лы. Пред-по-ло-жим, что
+ dp[i - 1], dp[i/2], dp[i/3]
+ []
+
+
 Overfull \hbox (3.46185pt too wide) in paragraph at lines 104--113
 [] 
  []
 
-[2] [3] (./lab7.aux) ) 
+[2] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2015/06/04 1.6 listings language file
+)
+LaTeX Font Info:    Try loading font information for T2A+cmss on input line 117
+.
+
+(/usr/share/texlive/texmf-dist/tex/latex/cyrillic/t2acmss.fd
+File: t2acmss.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
+)
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 120
+.
+LaTeX Font Info:    No file OMScmss.fd. on input line 120.
+
+
+LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textasteriskcentered' on input line 120.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 146--148
+
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 165--166
+
+ []
+
+[4] (./lab7.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ ) 
 Here is how much of TeX's memory you used:
- 25091 strings out of 494397
- 613840 string characters out of 6172289
- 804141 words of memory out of 5000000
- 27975 multiletter control sequences out of 15000+600000
- 12986 words of font info for 32 fonts, out of 8000000 for 9000
+ 25978 strings out of 494397
+ 630885 string characters out of 6172289
+ 824142 words of memory out of 5000000
+ 28852 multiletter control sequences out of 15000+600000
+ 15403 words of font info for 35 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 69i,8n,119p,935b,630s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh
--t2a/labx1200.600pk> </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t
-2a/labx1440.600pk> </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a
-/lati1200.600pk> </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/l
-arm1200.600pk> </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/lab
-x1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi1
-2.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on lab7.pdf (3 pages, 81445 bytes).
+ 69i,9n,119p,956b,1809s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/lass1000.600pk>
+ </home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/lasx1000.600pk> <
+/home/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1200.600pk> </h
+ome/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk> </hom
+e/alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/lati1200.600pk> </home/
+alex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk> </home/al
+ex/.texlive2017/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy8.pfb>
+Output written on lab7.pdf (4 pages, 115118 bytes).
 PDF statistics:
- 208 PDF objects out of 1000 (max. 8388607)
- 40 compressed objects within 1 object stream
+ 272 PDF objects out of 1000 (max. 8388607)
+ 56 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
