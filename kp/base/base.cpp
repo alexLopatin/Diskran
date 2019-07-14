@@ -45,7 +45,6 @@ float AStar(int start, int finish) {
                 current = *it;
             }
         }
-        cout << current <<' '<< finish << endl;
         if(current == finish) {
             return g[current];
         }
@@ -78,21 +77,18 @@ int main(int argc, char *argv[]) {
         inFile >> x >> y;
         vertices.push_back(TVertex(x, y));
     }
-
     for ( int i = 0; i < countOfEdges; i++) {
         int first, second = 0;
         inFile >> first >> second;
         vertices[first - 1].Edges.push_back(second - 1);
         vertices[second - 1].Edges.push_back(first - 1);
     }
-
     int countOfQueries = 0;
     inFile >>countOfQueries;
     ofstream outFile(argv[2]); 
     for ( int i = 0; i < countOfQueries; i++) {
         int first, second = 0;
         inFile >> first >> second;
-
         outFile << AStar(first - 1, second - 1) << endl;
     }
     inFile.close();
