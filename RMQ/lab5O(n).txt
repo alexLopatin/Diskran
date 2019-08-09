@@ -1,0 +1,204 @@
+#include <iostream>
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include <map>
+using namespace std;
+
+
+int pos = -1;
+
+class TNode {
+	int Right;					// [Left; Right)
+public:
+	int Left;
+	int GetRight() {
+		return ((Right == -1) ? (pos + 1) : Right);
+	}
+	map<char, TNode*> Edges;
+	TNode* SuffLink;
+	TNode(int left, int right) : Left(left), Right(right) {
+		SuffLink = 0;
+	}
+	int EdgeLength() {
+		return GetRight() - Left;
+	}
+};
+
+string s;
+TNode* head;
+
+TNode* activeNode = head;
+int activeLength = 0;
+int remainderT = 0;
+int activeEdgePos = 0;
+
+char ActiveEdge() {
+	return s[activeEdgePos];
+}
+
+TNode* lastInnerVertex = 0;
+
+void AddSuffixLink(TNode* suffNode) {
+	if (lastInnerVertex != 0) {
+		lastInnerVertex->SuffLink = suffNode;
+	}
+	lastInnerVertex = suffNode;
+}
+
+void Extend(char c) {
+	pos++;
+	remainderT++;
+	lastInnerVertex = 0;
+	while (remainderT > 0) {
+		if (activeLength == 0) {
+			activeEdgePos = pos;
+		}
+		if (activeNode->Edges[ActiveEdge()] == 0) {
+			TNode* leaf = new TNode(pos, -1);
+			activeNode->Edges[ActiveEdge()] = leaf;
+			AddSuffixLink(activeNode);
+		}
+		else {
+			TNode* next = activeNode->Edges[ActiveEdge()];
+			if (activeLength >= next->EdgeLength() ) {
+				activeLength -= next->EdgeLength();
+				activeEdgePos += next->EdgeLength();
+				activeNode = next;
+				continue;
+			}
+			if (s[next->Left + activeLength] == c) {
+				activeLength++;
+				AddSuffixLink(activeNode);
+				break;
+			}
+			TNode* split = new TNode(next->Left, next->Left + activeLength);
+			activeNode->Edges[ActiveEdge()] = split;
+			TNode* leaf = new TNode(pos, -1);
+			split->Edges[c] = leaf;
+			next->Left += activeLength;
+			split->Edges[s[next->Left]] = next;
+			AddSuffixLink(split);
+		}
+		remainderT--;
+		if (activeNode == head && activeLength > 0) { //rule 1
+			activeLength--;
+			activeEdgePos = pos - remainderT + 1;
+		}
+		else {
+			activeNode = activeNode->SuffLink > 0 ? activeNode->SuffLink : head; //rule 3
+		}
+	}
+}
+
+
+void BuildTree() {
+	for (int i = 0; i < s.length(); i++) {
+		Extend(s[i]);
+	}
+}
+
+void DeleteTree(TNode* cur = head) {
+	for (map<char, TNode*>::iterator it = cur->Edges.begin(); it != cur->Edges.end(); ++it) {
+		DeleteTree(it->second);
+	}
+	delete cur;
+}
+
+void TreeInit() {
+	head = new TNode(0, 0);
+	head->SuffLink = head;
+	activeNode = head;
+}
+
+//map<string, int> suffixArray;
+
+vector<int> suffixArray;
+
+
+void GetAllSuffixes(TNode* cur = head, int suffLength = 0) {
+	if (cur->Edges.size() == 0 ) {
+		suffixArray.push_back(cur->GetRight() - suffLength);
+	}
+	else {
+		for (map<char, TNode*>::iterator it = cur->Edges.begin(); it != cur->Edges.end(); ++it) {
+			GetAllSuffixes(it->second, 
+				suffLength + it->second->GetRight() - it->second->Left);
+		}
+	}
+	
+}
+
+vector<int> lcp;
+
+int Max(int a, int b) {
+	return ((a > b) ? a : b);
+}
+
+void BuildLCP() {
+	int n = pos + 1;
+	vector<int> sufInv;
+	for (int i = 0; i < n; i++) {
+		lcp.push_back(0);
+		sufInv.push_back(0);
+	}
+	for (int i = 0; i < n; i++) {
+		sufInv[suffixArray[i]] = i;
+	}
+	int k = 0;
+	for (int i = 0; i < n; i++) {
+		if (k > 0) {
+			k--;
+		}
+		if (sufInv[i] == n - 1) {
+			lcp[n - 1] = -1;
+			k = 0;
+			continue;
+		}
+		else {
+			int j = suffixArray[sufInv[i] + 1];
+			while (Max(i + k, j + k) < n && s[i + k] == s[j + k]) {
+				k++;
+			}
+			lcp[sufInv[i]] = k;
+		}
+	}
+}
+
+vector<int> Blocks;
+
+void Precalc() {
+	int n = lcp.size();
+	int blockSize = log(n) / 2;
+	int k = n / blockSize;
+	int curBlock = -1;
+	for (int i = 0; i < k; i++) {
+		Blocks.push_back(-1);
+	}
+	for (int i = 0; i < n; i++) {
+		if (i % blockSize == 0) {
+			curBlock++;
+		}
+		if (Blocks[curBlock] = -1 || lcp[Blocks[curBlock]] > lcp[i]) {
+			Blocks[curBlock] = i;
+		}
+	}
+}
+
+void FindAll(string tmplt) {
+	BuildLCP();
+	Precalc();
+}
+
+int main()
+{
+	//s = "banantrutyuiyiyuiyertretfghfhgjnbmbnuiyiuyijbanantrutyuiyiyuiyertretfghfhgjnbmbnuiyiuyijnkjhkjhjtyutyurtyfgbvnbmbnmjhklllllhhggfrtoooooooooosdpoooouooiuoioouiououiaavabababrtutyjhgjfgjrtfrtyryedfghgrgergergerhfgjghmbnmfhtasnkjhkjhjtyutyurtyfgbvnbmbnmjhklllllhhggfrtoooooooooosdpoooouooiuoioouiououiaavabababrtutyjhgjfgjrtfrtyryedfghgrgergergerhfgjghmbnmfhtabanantrutyuiyiyuiyertretfghfhgjnbmbnuiyiuyijnkjhkjhjtyutyurtyfgbvnbmbnmjhklllllhhggfrtoooooooooosdpoooouooiuoioouiououiaavabababrtutyjhgjfgjrtfrtyryedfghgrgergergerhfgjghmbnmfhtass$";
+	s = "mississippi$";
+	cout << "s length: " << s.length() << endl;
+	TreeInit();
+	BuildTree();
+	GetAllSuffixes();
+	DeleteTree();
+	FindAll("ab");
+    return 0;
+}
