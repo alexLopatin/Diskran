@@ -1,198 +1,187 @@
- ConsoleApplication50.cpp определяет точку входа для консольного приложения.
-
-
-#include stdafx.h
-#include iostream
-#include string
-#include vector
-#include map
+#include <iostream>
+#include <stdio.h>
+#include <string>
+#include <time.h>
+#include <vector>
+#include <map>
 using namespace std;
 
 
-int currentStringCount = 0;
+int pos = -1;
 
 class TNode {
-	int Right;					 [Left; Right)
-public
+	int Right;					// [Left; Right)
+public:
 	int Left;
 	int GetRight() {
-		return ((Right == -1)  currentStringCount  Right);
+		return ((Right == -1) ? (pos + 1) : Right);
 	}
-	TNode Parent;
-	mapchar, TNode Edges;
-	TNode SuffLink;
-	TNode(int left, int right)  Left(left), Right(right) {
-		SuffLink = this;
+	map<char, TNode*> Edges;
+	TNode* SuffLink;
+	TNode(int left, int right) : Left(left), Right(right) {
+		SuffLink = 0;
+	}
+	int EdgeLength() {
+		return GetRight() - Left;
 	}
 };
 
 string s;
-TNode head;
+TNode* head;
 
+TNode* activeNode = head;
+int activeLength = 0;
+int remainderT = 0;
+int activeEdgePos = 0;
 
-enum Rules {EXTENSION, BRANCH, SPLIT_EDGE, EMPTY, DONTDOANY};
+char ActiveEdge() {
+	return s[activeEdgePos];
+}
 
-struct TState {
-	TNode CurrentNode;
-	int CurPosInEdge = 0;
-	int CurPosInSuf;
-	int LeftIndexSuf;
-	int RightIndexSuf;
-	TState(TNode currentNode, int leftIndexSuf, int rightIndexSuf) CurrentNode(currentNode), LeftIndexSuf(leftIndexSuf), RightIndexSuf(rightIndexSuf), CurPosInSuf(leftIndexSuf) {}
-	Rules Go() {
-		if (CurPosInSuf == RightIndexSuf) {
-			cout  EMPTY  endl;
-			return EMPTY;
+TNode* lastInnerVertex = 0;
+
+void AddSuffixLink(TNode* suffNode) {
+	if (lastInnerVertex != 0) {
+		lastInnerVertex->SuffLink = suffNode;
+	}
+	lastInnerVertex = suffNode;
+}
+
+void Extend(char c) {
+	pos++;
+	remainderT++;
+	lastInnerVertex = 0;
+	while (remainderT > 0) {
+		if (activeLength == 0) {
+			activeEdgePos = pos;
 		}
-		if (CurPosInEdge == CurrentNode-GetRight()) {
-			if (CurrentNode-Edges.find(s[CurPosInSuf]) != CurrentNode-Edges.end()) {
-				CurrentNode = CurrentNode-Edges[s[CurPosInSuf]];
-				CurPosInEdge = CurrentNode-Left;
-			}
-			else {
-				if (CurrentNode-Edges.size() == 0 && CurrentNode != head) {
-					return EXTENSION;
-				}
-				else {
-					return BRANCH;
-				}
-			}
+		if (activeNode->Edges[ActiveEdge()] == 0) {
+			TNode* leaf = new TNode(pos, -1);
+			activeNode->Edges[ActiveEdge()] = leaf;
+			AddSuffixLink(activeNode);
 		}
 		else {
-			if (s[CurPosInSuf] == s[CurPosInEdge]) {
-				CurPosInSuf++;
-				CurPosInEdge++;
+			TNode* next = activeNode->Edges[ActiveEdge()];
+			if (activeLength >= next->EdgeLength() ) {
+				activeLength -= next->EdgeLength();
+				activeEdgePos += next->EdgeLength();
+				activeNode = next;
+				continue;
 			}
-			else {
-				return SPLIT_EDGE;
+			if (s[next->Left + activeLength] == c) {
+				activeLength++;
+				AddSuffixLink(activeNode);
+				break;
 			}
+			TNode* split = new TNode(next->Left, next->Left + activeLength);
+			activeNode->Edges[ActiveEdge()] = split;
+			TNode* leaf = new TNode(pos, -1);
+			split->Edges[c] = leaf;
+			next->Left += activeLength;
+			split->Edges[s[next->Left]] = next;
+			AddSuffixLink(split);
 		}
-		return DONTDOANY;
+		remainderT--;
+		if (activeNode == head && activeLength > 0) { //rule 1
+			activeLength--;
+			activeEdgePos = pos - remainderT + 1;
+		}
+		else {
+			activeNode = activeNode->SuffLink > 0 ? activeNode->SuffLink : head; //rule 3
+		}
 	}
-};
-
-void InsertSuffix(int leftSuf, int rightSuf, TNode node);
-
-void GoToNextSuffix(TNode fromWhereWeGo, int CurPosInEdge, int rightSuf) {
-	TNode suffNode = fromWhereWeGo-Parent-SuffLink;
-	InsertSuffix(rightSuf - CurPosInEdge + fromWhereWeGo-Left - (fromWhereWeGo-Parent != head), rightSuf, suffNode);
-	cout  goes to next suffix  endl;
 }
 
-TNode lastInnerVertex = 0;
-
-int lastNotEmpty = 0;
-
-void InsertSuffix(int leftSuf, int rightSuf, TNode node = head) {
-	if (leftSuf = rightSuf) {
-		return;
-	}
-	TState state = new TState(node, leftSuf, rightSuf);
-	int rule = DONTDOANY;
-	while (rule == DONTDOANY) {
-		rule = state-Go();
-	}
-	if (rule == EMPTY) {
-		state-CurPosInEdge--;
-		if (lastInnerVertex != 0) {
-			lastInnerVertex-SuffLink = state-CurrentNode-Parent;
-			lastInnerVertex = 0;
-		}
-		return;
-	}
-	else if (rule == EXTENSION) {
-		state-CurrentNode-Right++;
-	}
-	else if (rule == BRANCH) {
-		TNode newNode = new TNode(rightSuf - 1, -1);  -1 - currentStringCount
-		state-CurrentNode-Edges[s[rightSuf - 1]] = newNode;
-		newNode-Parent = state-CurrentNode;
-		if (lastInnerVertex != 0) {
-			lastInnerVertex-SuffLink = state-CurrentNode;
-			lastInnerVertex = 0;
-		}
-		state-CurrentNode = newNode;
-		lastNotEmpty = leftSuf + 1;
-		lastNotEmpty++;
-	}
-	else if (rule == SPLIT_EDGE) {
-		TNode newParent = new TNode(state-CurrentNode-Left, state-CurPosInEdge);
-		int left = state-CurrentNode-Left;
-		state-CurrentNode-Left = state-CurPosInEdge;
-		newParent-Parent = state-CurrentNode-Parent;
-		newParent-Parent-Edges[s[left]] = newParent;
-		state-CurrentNode-Parent = newParent;
-		TNode newNode = new TNode(rightSuf - 1, -1);  -1 - currentStringCount
-		newNode-Parent = newParent;
-		newParent-Edges[s[rightSuf - 1]] = newNode;
-		newParent-Edges[s[state-CurPosInEdge]] = state-CurrentNode;
-		state-CurrentNode = newParent;
-		state-CurPosInEdge = state-CurrentNode-GetRight();
-		if (lastInnerVertex != 0) {
-			lastInnerVertex-SuffLink = state-CurrentNode;
-		}
-		lastInnerVertex = state-CurrentNode;
-		lastNotEmpty = leftSuf;
-	}
-	TNode cur = state-CurrentNode;
-	int curPos = state-CurPosInEdge;
-	
-	if (rule == SPLIT_EDGE) {
-		rule = 2;
-	}
-	delete state;
-	if (rule != DONTDOANY) {
-		GoToNextSuffix(cur, curPos, rightSuf);
-	}
-}
 
 void BuildTree() {
-	for (int i = 1; i = s.length(); i++) {
-		for (int j = 0; j  i; j++) {
-			currentStringCount = i;
-			InsertSuffix(j, i);
-		}
+	for (int i = 0; i < s.length(); i++) {
+		Extend(s[i]);
 	}
+}
 
+void DeleteTree(TNode* cur = head) {
+	for (map<char, TNode*>::iterator it = cur->Edges.begin(); it != cur->Edges.end(); ++it) {
+		DeleteTree(it->second);
+	}
+	delete cur;
 }
 
 void TreeInit() {
 	head = new TNode(0, 0);
-	head-Parent = head;
-	head-SuffLink = head;
+	head->SuffLink = head;
+	activeNode = head;
 }
 
-int countOfSuffs = 0;
+//map<string, int> suffixArray;
 
-void PrintSuff(TNode cur = head, string str = ) {
-	if (cur-Edges.size() == 0) {
-		countOfSuffs++;
-		cout  str  endl;
+vector<int> suffixArray;
+
+void GetAllSuffixes(TNode* cur = head, int suffLength = 0) {
+	if (cur->Edges.size() == 0 ) {
+		
+		suffixArray.push_back(cur->GetRight() - suffLength);
 	}
 	else {
-		for (mapchar, TNodeiterator it = cur-Edges.begin(); it != cur-Edges.end(); ++it)
-		{
-			
-			PrintSuff(it-second, str + s.substr(it-second-Left, it-second-GetRight() - it-second-Left));
+		for (map<char, TNode*>::iterator it = cur->Edges.begin(); it != cur->Edges.end(); ++it) {
+			GetAllSuffixes(it->second, 
+				suffLength + it->second->GetRight() - it->second->Left);
 		}
 	}
 	
 }
 
-void FindAll(string tmplt, TNode node = head) {
-	
+int leftBorder(int left, int right, int i, string tmplt, int borderFlag) {
+	int curr = (left + right) / 2; // s[suffixArray[curr] + i] != tmplt[i] ||  s[suffixArray[curr + 1] + i] == tmplt[i]
+	while (s[suffixArray[curr] + i] != tmplt[i] || s[suffixArray[curr + borderFlag] + i] == tmplt[i]) {
+		if (tmplt[i] > s[suffixArray[curr] + i]) {
+			left = curr;
+		}
+		else {
+			right = curr;
+		}
+		if ((left >= right - 1) && tmplt[i] != s[suffixArray[curr] + i]) {
+			return ((borderFlag == -1) ? right : left);
+		}
+		curr = (left + right) / 2;
+	}
+	return curr;
+}
+
+void FindAll(string tmplt) {
+	int left = 0;
+	int right = s.length();
+	for (int i = 0; i < tmplt.length(); i++) {
+		left = leftBorder(left, right, i, tmplt, -1);
+		right = leftBorder(left, right, i, tmplt, 1);
+	}
+	if (right - left > 0) {
+		for (int i = left; i <= right; i++) {
+			cout << suffixArray[i] << endl;
+		}
+	}
+	else {
+		cout << "no match" << endl;
+	}
+}
+
+void GenerateString(int length) {
+	srand(time(0));
+	for (int i = 0; i < length; i++) {
+		s += char(rand() % 26 + 97);
+	}
+	s += '$';
 }
 
 int main()
 {
-	s = banantrutyuiyiyuiyertretfghfhgjnbmbnuiyiuyijbanantrutyuiyiyuiyertretfghfhgjnbmbnuiyiuyijnkjhkjhjtyutyurtyfgbvnbmbnmjhklllllhhggfrtoooooooooosdpoooouooiuoioouiououiaavabababrtutyjhgjfgjrtfrtyryedfghgrgergergerhfgjghmbnmfhtasnkjhkjhjtyutyurtyfgbvnbmbnmjhklllllhhggfrtoooooooooosdpoooouooiuoioouiououiaavabababrtutyjhgjfgjrtfrtyryedfghgrgergergerhfgjghmbnmfhtabanantrutyuiyiyuiyertretfghfhgjnbmbnuiyiuyijnkjhkjhjtyutyurtyfgbvnbmbnmjhklllllhhggfrtoooooooooosdpoooouooiuoioouiououiaavabababrtutyjhgjfgjrtfrtyryedfghgrgergergerhfgjghmbnmfhtass;
-	s = wehopeyouwillmaintainyourmembershipandwillencourageboththelibrariesyouuseandalsootherindividualstojoinMembershipconveysmanybenefitsforyouandforthewideracademiccommunityconcernedfortheunderstandingofmedievaltexts$;
-	cout  s length   s.length()  endl;
+	//GenerateString(100000);
+	s = "abacaba$";
+	//cout << "s length: " << s.length() << endl;
 	TreeInit();
 	BuildTree();
-	PrintSuff();
-	cout  count of suffs   s.length()  endl;
-	FindAll(courage);
+	GetAllSuffixes();
+	DeleteTree();
+	//cout << "count of suffixes: " << suffixArray.size() << endl;
+	FindAll("aba");
     return 0;
 }
-
