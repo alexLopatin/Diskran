@@ -112,8 +112,6 @@ void TreeInit() {
 	activeNode = head;
 }
 
-//map<string, int> suffixArray;
-
 vector<int> suffixArray;
 
 void GetAllSuffixes(TNode* cur = head, int suffLength = 0) {
@@ -130,37 +128,48 @@ void GetAllSuffixes(TNode* cur = head, int suffLength = 0) {
 	
 }
 
-int leftBorder(int left, int right, int i, string tmplt, int borderFlag) {
-	int curr = (left + right) / 2; // s[suffixArray[curr] + i] != tmplt[i] ||  s[suffixArray[curr + 1] + i] == tmplt[i]
-	while (s[suffixArray[curr] + i] != tmplt[i] || s[suffixArray[curr + borderFlag] + i] == tmplt[i]) {
-		if (tmplt[i] > s[suffixArray[curr] + i]) {
-			left = curr;
+
+int RightBinSearch(int l, int r, int i, string tmplt) {
+	if(tmplt[i] > s[suffixArray[r] + i] &&
+		tmplt[i] < s[suffixArray[l] + i]) {
+		return r;
+	}
+	while( l < r) {
+		int m = (l + r) / 2;
+		if(s[suffixArray[m] + i] > tmplt[i]) {
+			r = m;
 		}
 		else {
-			right = curr;
+			l = m + 1;
 		}
-		if ((left >= right - 1) && tmplt[i] != s[suffixArray[curr] + i]) {
-			return ((borderFlag == -1) ? right : left);
-		}
-		curr = (left + right) / 2;
 	}
-	return curr;
+	return r;
+}
+
+int LeftBinSearch(int l, int r, int i, string tmplt) {
+	if(tmplt[i] > s[suffixArray[r] + i] &&
+		tmplt[i] < s[suffixArray[l] + i]) {
+		return l;
+	}
+	while( l < r) {
+		int m = (l + r) / 2;
+		if(s[suffixArray[m] + i] < tmplt[i]) {
+			l = m + 1;
+		}
+		else {
+			r = m;
+		}
+	}
+	return l;
 }
 
 void FindAll(string tmplt) {
-	int left = 0;
-	int right = s.length();
-	for (int i = 0; i < tmplt.length(); i++) {
-		left = leftBorder(left, right, i, tmplt, -1);
-		right = leftBorder(left, right, i, tmplt, 1);
-	}
-	if (right - left > 0) {
-		for (int i = left; i <= right; i++) {
-			cout << suffixArray[i] << endl;
-		}
-	}
-	else {
-		cout << "no match" << endl;
+	int l = 0;
+	int r = suffixArray.size();
+	for( int i = 0; i < tmplt.length(); i++) {
+		l = LeftBinSearch(l, r, i, tmplt);
+		r = RightBinSearch(l, r, i, tmplt);
+		cout << l << ":" << r << endl;
 	}
 }
 
@@ -174,14 +183,17 @@ void GenerateString(int length) {
 
 int main()
 {
-	//GenerateString(100000);
-	s = "abacaba$";
-	//cout << "s length: " << s.length() << endl;
+	GenerateString(100000);  // check linear time
+	//s = "howeverwhenthenumberofdocumentstosearchispotentiallylargeorthequantityofsearchqueriestoperformissubstantialtheproblemoffulltextsearchisoftendivided$";
 	TreeInit();
 	BuildTree();
 	GetAllSuffixes();
 	DeleteTree();
-	//cout << "count of suffixes: " << suffixArray.size() << endl;
-	FindAll("aba");
+	//for( int i = 0; i < suffixArray.size(); i++) {
+		//cout << s.substr(suffixArray[i], s.length() - suffixArray[i]) << endl;
+	//}
+	cout << "s length: " << s.length() << endl;
+	cout << "count of suffixes: " << suffixArray.size() << endl;
+	//FindAll("e");
     return 0;
 }
