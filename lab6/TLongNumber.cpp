@@ -1,6 +1,14 @@
 #include"TLongNumber.h"
 using namespace std;
 TLongNumber::TLongNumber(string number) {
+    while(number.length() > 1) {
+        if(number[0] == '0') {
+            number = number.substr(1, number.length() - 1);
+        }
+        else {
+            break;
+        }
+    }
     for (int i = number.length(); i>0; i-=9)
     if (i < 9) {
         Num.push_back (atoi (number.substr (0, i).c_str()));

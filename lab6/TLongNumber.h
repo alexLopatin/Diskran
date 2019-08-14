@@ -163,39 +163,60 @@ struct TLongNumber {
         string strA = a.GetString();
         int carry = 0;
         int j = 0;
+        int countSubA = 0;
+        int currIndex = countB - 1;
+        TLongNumber subA;
         while(true) {
-            j++;
-            TLongNumber subA = strA.substr(0, countB + carry);
-            cout << strA.substr(0, countB + carry) << endl;
+            if(countB + carry <= strA.length()) {
+                subA = strA.substr(0, countB + carry);
+            }
+        
+            //cout << strA.substr(0, countB + carry) << endl;
+            //cout << "countSubA: " << countSubA << endl;
             if(subA < b) {
-                if(carry > 0) {
-                    result += "0";
-                }
                 if(countB + carry >= strA.length()) {
+                    cout << "strA: " << strA << endl;
                     break;
                 }
+                currIndex++;
                 carry++;
                 continue;
             }
-
-            TLongNumber c;
-            for( int i = 2; i <= 10; i++) {
-                c = TLongNumber(to_string(i));
+            cout << "strA: " << strA << endl;
+            for( int i = 1; i <= 10; i++) {
+                TLongNumber c = TLongNumber(to_string(i));
                 if(c * b > subA) {
                     c = b * TLongNumber(to_string(i - 1));
+
+                    subA = subA - c;
+                    
+                    //cout << "carry: " <<  countB + carry - countSubA - 1 << endl;
+                    for ( int i = 0; i < countB + carry - countSubA - 1; i++) {
+                        result += "0";
+                    }
                     result += to_string(i - 1);
+                    countSubA = (int)subA.GetString().length();
                     break;
                 }
             }
-            subA = subA - c;
-            for (int i = 0; i < countB - subA.GetString().length(); i++) {
-                result += "0";
-            }
+
             strA = subA.GetString() + strA.substr(countB + carry, strA.length());
+            int prevCountA = (int)a.GetNumberCount();
             a = TLongNumber(strA);
+            currIndex += (int)a.GetNumberCount() - prevCountA;
+
+            cout << "curr: " << currIndex << endl;
+            //cout << "subA: " << subA << endl;
             carry = 0;
+            j++;
         }
-        cout << "result: " << result << endl;
+
+        //cout << "carry: " <<  countB + carry - countSubA  << endl;
+        if(currIndex != strA.length())
+        for ( int i = 0; i < countB + carry - countSubA - 1; i++) {
+            result += "0";
+        }
+        //cout << "result: " << result << endl;
         return TLongNumber(result);
     }
     TLongNumber Pow(TLongNumber power) {
