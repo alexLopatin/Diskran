@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
         }
         inFile.close();
         RadixSort(pairs, size);
-        ofstream outFile(argv[2], "rw");
+        ofstream outFile(argv[2]);
         if(!outFile.is_open()) {
             cout << "unable to open file " << argv[2] << endl;
             return 0;
