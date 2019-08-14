@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -std=c++11 -pedantic -Wall -Werror -Wno-sign-compare -Wno-long-long -lm
+FLAGS = -std=c++11 
 FILES = lab6.cpp TLongNumber.cpp
 PROG = lab6
 longNumbers:
