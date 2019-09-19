@@ -12,12 +12,10 @@ string BoolToStr(bool val) {
 }
 
 int main(int argc, char *argv[]) {
-	ifstream inFile(argv[1]);
-    ofstream outFile(argv[2]); 
     TLongNumber a;
     TLongNumber b;
     string s;
-    while(inFile >> s) {
+    while(cin >> s) {
         if(IsNumber(s)) {
             a = b;
             b = TLongNumber(s);
@@ -25,50 +23,48 @@ int main(int argc, char *argv[]) {
         else {
             switch(s[0]) {
                 case '+':
-                    outFile << a + b << endl;
+                    cout << a + b << endl;
                     break;
                 case '-':
                     if( a < b) {
-                        outFile << "Error" << endl;
+                        cout << "Error" << endl;
                     } 
                     else {
-                        outFile << a - b << endl;
+                        cout << a - b << endl;
                     }
                     break;
                 case '*':
-                    outFile << a * b << endl;
+                    cout << a * b << endl;
                     break;
                 case '/':
                     if( b == TLongNumber("0")) {
-                        outFile << "Error" << endl;
+                        cout << "Error" << endl;
                     }
                     else {
-                        outFile << a / b << endl;
+                        cout << a / b << endl;
                     }
                     break;
                 case '^':
                     if( a == TLongNumber("0") && b == TLongNumber("0")) {
-                        outFile << "Error" << endl;
+                        cout << "Error" << endl;
                     }
                     else {
-                        outFile << a.Pow(b) << endl;
+                        cout << a.Pow(b) << endl;
                     }
                     break;
                 case '>':
-                    outFile << BoolToStr(a > b) << endl;
+                    cout << BoolToStr(a > b) << endl;
                     break;
                 case '<':
-                    outFile << BoolToStr(a < b) << endl;
+                    cout << BoolToStr(a < b) << endl;
                     break;
                 case '=':
-                    outFile << BoolToStr(a == b) << endl;
+                    cout << BoolToStr(a == b) << endl;
                     break;
                 default:
-                    outFile << "Error" << endl;
+                    cout << "Error" << endl;
                     break;
             }
         }
     }
-    inFile.close();
-    outFile.close();
 }

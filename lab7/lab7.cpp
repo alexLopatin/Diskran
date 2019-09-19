@@ -1,6 +1,4 @@
 #include <iostream>
-#include <fstream>
-using namespace std;
 
 int Min(int a, int b) {
     return (a < b) ? a : b;
@@ -10,11 +8,8 @@ int Min(int a, int b, int c) {
 }
 
 int main(int argc, char *argv[]) {
-	ifstream inFile(argv[1]);
     int n = 0;
-    inFile >> n;
-    inFile.close();
-    
+    std::cin >> n; 
     int* arr = new int[n+1];
     arr[0] = 0;
     arr[1] = 0;
@@ -32,50 +27,50 @@ int main(int argc, char *argv[]) {
             arr[i] = i + arr[i - 1];
         }
     }
-    ofstream outFile(argv[2]);
-    outFile << arr[n] << endl;
+    std::cout << arr[n] << std::endl;
     for( int i = n; i != 1; ) {
+        if(i != n) {
+            std::cout << ' ';
+        }
         if(i % 6 == 0){ 
             if(arr[i / 3] <= arr[i / 2] && arr[i / 3] <= arr[i - 1]) {
-                outFile << "/3 ";
+                std::cout << "/3";
                 i /= 3;
             }
             else if(arr[i / 2] <= arr[i / 3] && arr[i / 2] <= arr[i - 1]) {
-                outFile << "/2 ";
+                std::cout << "/2";
                 i /= 2;
             }
             else {
-                outFile << "-1 ";
+                std::cout << "-1";
                 i--;
             }
         }
         else if (i % 3 == 0) {
             if(arr[i / 3] <= arr[i - 1]) {
-                outFile << "/3 ";
+                std::cout << "/3";
                 i /= 3;
             }
             else {
-                outFile << "-1 ";
+                std::cout << "-1";
                 i--;
             }
         }
         else if (i % 2 == 0) {
             if(arr[i / 2] <= arr[i - 1]) {
-                outFile << "/2 ";
+                std::cout << "/2";
                 i /= 2;
             }
             else {
-                outFile << "-1 ";
+                std::cout << "-1";
                 i--;
             }
         }
         else {
-            outFile << "-1 ";
+            std::cout << "-1";
             i--;
         }
     }
-    outFile << endl;
-    
-    outFile.close();
+    std::cout << std::endl;
     delete[] arr;
 }

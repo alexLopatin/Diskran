@@ -3,15 +3,13 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-	ifstream inFile(argv[1]);
     int indices[] = {0, 0, 0, 0};
-    inFile >> indices[3];
+    cin >> indices[3];
     int* arr = new int[indices[3]];
     for( int i = 0; i < indices[3]; i++) {
-    	inFile >> arr[i];
+    	cin >> arr[i];
     	indices[arr[i]-1]++;
     }
-    inFile.close();
     indices[2] = indices[1] + indices[0];
     indices[1] = indices[0];
     indices[0] = 0;
@@ -39,8 +37,6 @@ int main(int argc, char *argv[]) {
     		}
     	}
     }
-    ofstream outFile(argv[2]);
-    outFile << res;
-    outFile.close();
+    cout << res << endl;
     delete[] arr;
 }

@@ -54,13 +54,14 @@ std::ostream & operator << (std::ostream &out, const TLongNumber & obj) {
 std::istream& operator >> (std::istream& in, TLongNumber& obj) {
     string s;
     in >> s;
-    for (int i = s.length(); i>0; i -= 9)
+    for (int i = s.length(); i>0; i -= 9) {
         if (i < 9) {
             obj.Num.push_back(atoi(s.substr(0, i).c_str()));
         }
         else {
             obj.Num.push_back(atoi(s.substr(i - 9, 9).c_str()));
         }
+    }
         return in;
 }
 TLongNumber operator+ (const TLongNumber &a, const TLongNumber &b)

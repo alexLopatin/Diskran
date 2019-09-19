@@ -17,7 +17,7 @@ public:
     }
     map<char, TNode*> Edges;
     TNode* SuffLink = 0;
-    TNode(int left, int right) : Left(left), Right(right) { }
+    TNode(int left, int right) : Right(right), Left(left) { }
     int EdgeLength() {
         return GetRight() - Left;
     }
@@ -128,7 +128,7 @@ string templateString;
 int RightBinSearch(int l, int r, int i) {
     if(templateString[i] > s[suffixArray[r] + i] &&
         templateString[i] < s[suffixArray[l] + i]) {
-        return r;
+        return -1;
     }
     while( l < r) {
         int m = (l + r) / 2;
@@ -159,8 +159,6 @@ int LeftBinSearch(int l, int r, int i) {
     return l;
 }
 
-ofstream outFile;
-
 void FindAll() {
     int l = 0;
     int r = suffixArray.size();
@@ -174,24 +172,22 @@ void FindAll() {
     }
     sort(result.begin(), result.end());             // номера позиций, где встречается образец в порядке возрастания
     for( int i = 0; i < result.size(); i++) {
-        outFile << result[i] << ((i == result.size() - 1) ? "" : ", ");
+        cout << result[i] << ((i == result.size() - 1) ? "" : ", ");
     }
-    outFile << endl;
+    cout << endl;
 }
 
 int main(int argc, char *argv[])
 {
-    ifstream inFile(argv[1]);
-    outFile.open(argv[2]);
-    inFile >> s;
+    cin >> s;
     s += '$';
     TreeInit();
     BuildTree();
     GetAllSuffixes();
     DeleteTree();
     int i = 1;
-    while(inFile >> templateString) {
-        outFile << i++ << ": "; 
+    while(cin >> templateString) {
+        cout << i++ << ": "; 
         FindAll();
     }
     return 0;
